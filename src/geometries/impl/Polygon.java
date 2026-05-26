@@ -3,7 +3,6 @@ package geometries.impl;
 import static primitives.Util.isZero;
 
 import java.util.List;
-
 import geometries.api.Geometry;
 import primitives.*;
 
@@ -40,7 +39,7 @@ public class Polygon extends Geometry {
     * </ul>
     * @param  vertices                 polygon vertices in edge order
     * @throws IllegalArgumentException if the vertices do not form a valid convex
-    *                                  polygon
+    * polygon
     */
    public Polygon(Point... vertices) {
       if (vertices.length < 3)
@@ -76,4 +75,9 @@ public class Polygon extends Geometry {
 
    @Override
    public Vector getNormal(Point point) { return _plane.getNormal(point); }
+
+   @Override
+   public List<Point> findIntersections(Ray ray) {
+      return null; // Skeleton implementation
+   }
 }

@@ -6,7 +6,7 @@ import primitives.Vector;
 /**
  * Base abstract class for all geometric shapes.
  */
-public abstract class Geometry {
+public abstract class Geometry extends Intersectable {
     /**
      * Calculates the normal vector to the geometry at a specific point.
      * @param point the point on the geometry surface
