@@ -145,5 +145,10 @@ class SphereTests {
 
         // BV12: Ray's line is outside sphere, ray is orthogonal to ray start to sphere's center line
         assertNull(SPHERE_INT.findIntersections(new Ray(P3, V3)), ERROR_NO_INTERSECTION);
+
+        // BV13: Ray starts inside, ray is orthogonal to ray start to sphere's center line (1 point)
+        List<Point> resultBV13 = SPHERE_INT.findIntersections(new Ray(P2, V6));
+        assertNotNull(resultBV13, ERROR_RESULT);
+        assertEquals(1, resultBV13.size(), ERROR_WRONG_NUM_OF_INTERSECTIONS);
     }
 }

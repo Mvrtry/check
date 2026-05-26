@@ -46,6 +46,7 @@ class PlaneTests {
     private static final Vector V1 = new Vector(0, 0, 1);
     private static final Vector V2 = new Vector(0, 1, 0);
     private static final Vector V3 = new Vector(1, 0, 0);
+    private static final Vector V4 = new Vector(1, 1, 1);
 
     private static final Plane PLANE_INT = new Plane(P1, V1); // P1 is (0,0,1) from original file
 
@@ -150,6 +151,11 @@ class PlaneTests {
         // **** Group 3: Ray is neither orthogonal nor parallel to the plane
 
         // BV06: Ray begins in the plane (P0 is in the plane, but not the ray)
-        assertNull(PLANE_INT.findIntersections(new Ray(P1, V3)), ERROR_NO_INTERSECTION);
+        // Using P_LINE1 (1,1,1) which sits on the plane z=1, but is not the reference point
+        assertNull(PLANE_INT.findIntersections(new Ray(P_LINE1, V4)), ERROR_NO_INTERSECTION);
+
+        // BV07: Ray begins in the plane exactly at the reference point of the plane (Q)
+        // Using P1 (0,0,1) which is exactly the reference point of PLANE_INT
+        assertNull(PLANE_INT.findIntersections(new Ray(P1, V4)), ERROR_NO_INTERSECTION);
     }
 }
