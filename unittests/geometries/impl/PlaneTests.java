@@ -3,6 +3,7 @@ package geometries.impl;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import primitives.*;
+import java.util.List;
 
 /**
  * Unit tests for class {@link Plane}.
@@ -31,6 +32,22 @@ class PlaneTests {
 
     /** Point for EP normal test (not the reference point) */
     private static final Point P_NORMAL_EP = new Point(0.5, 0.5, 0);
+
+    // ============ Fields for findIntersections test ==============
+    /** Error message for missing intersections */
+    private static final String ERROR_NO_INTERSECTION = "ERROR: Ray does not intersect (expected null)";
+    /** Error message for wrong number of intersections */
+    private static final String ERROR_WRONG_NUM_OF_INTERSECTIONS = "ERROR: Wrong number of intersection points";
+
+    private static final Point P4 = new Point(0, 0, 0);
+    private static final Point P5 = new Point(0, 0, -1);
+    private static final Point P6 = new Point(0, 0, 2);
+
+    private static final Vector V1 = new Vector(0, 0, 1);
+    private static final Vector V2 = new Vector(0, 1, 0);
+    private static final Vector V3 = new Vector(1, 0, 0);
+
+    private static final Plane PLANE_INT = new Plane(P1, V1); // P1 is (0,0,1) from original file
 
     /**
      * Test method for {@link Plane#Plane(Point, Point, Point)}.
@@ -88,5 +105,51 @@ class PlaneTests {
         // BV01: Test normal calculation at the reference point of the plane.
         Vector refNormal = pl.getNormal(P1);
         assertEquals(1d, refNormal.length(), DELTA, ERROR_RESULT);
+    }
+
+    /**
+     * Test method for {@link geometries.impl.Plane#findIntersections(primitives.Ray)}.
+     */
+    @Test
+    void testFindIntersections() {
+        // ============ Equivalence Partitions Tests ==============
+
+        // EP01: Ray intersects the plane (1 point)
+        List<Point> resultEP01 = PLANE_INT.findIntersections(new Ray(P4, V1));
+        assertNotNull(resultEP01, ERROR_RESULT);
+        assertEquals(1, resultEP01.size(), ERROR_WRONG_NUM_OF_INTERSECTIONS);
+        assertEquals(List.of(P1), resultEP01, ERROR_RESULT);
+
+        // EP02: Ray does not intersect the plane
+        assertNull(PLANE_INT.findIntersections(new Ray(P4, V2)), ERROR_NO_INTERSECTION);
+
+        // =============== Boundary Values Tests ==================
+
+        // **** Group 1: Ray is parallel to the plane
+
+        // BV01: Ray is included in the plane
+        assertNull(PLANE_INT.findIntersections(new Ray(P1, V3)), ERROR_NO_INTERSECTION);
+
+        // BV02: Ray is not included in the plane
+        assertNull(PLANE_INT.findIntersections(new Ray(P4, V3)), ERROR_NO_INTERSECTION);
+
+        // **** Group 2: Ray is orthogonal to the plane
+
+        // BV03: Ray starts before the plane
+        List<Point> resultBV03 = PLANE_INT.findIntersections(new Ray(P5, V1));
+        assertNotNull(resultBV03, ERROR_RESULT);
+        assertEquals(1, resultBV03.size(), ERROR_WRONG_NUM_OF_INTERSECTIONS);
+        assertEquals(List.of(P1), resultBV03, ERROR_RESULT);
+
+        // BV04: Ray starts in the plane
+        assertNull(PLANE_INT.findIntersections(new Ray(P1, V1)), ERROR_NO_INTERSECTION);
+
+        // BV05: Ray starts after the plane
+        assertNull(PLANE_INT.findIntersections(new Ray(P6, V1)), ERROR_NO_INTERSECTION);
+
+        // **** Group 3: Ray is neither orthogonal nor parallel to the plane
+
+        // BV06: Ray begins in the plane (P0 is in the plane, but not the ray)
+        assertNull(PLANE_INT.findIntersections(new Ray(P1, V3)), ERROR_NO_INTERSECTION);
     }
 }
