@@ -10,8 +10,14 @@ import primitives.Ray;
 public abstract class Intersectable {
 
     /**
+     * Default empty constructor.
+     */
+    public Intersectable() {
+    }
+
+    /**
      * Finds all intersection points of a ray with the geometry.
-     * * @param ray the ray intersecting the geometry
+     * @param ray the ray intersecting the geometry
      * @return a list of intersection points, or null if there are no intersections
      */
     public abstract List<Point> findIntersections(Ray ray);

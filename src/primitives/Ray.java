@@ -30,6 +30,10 @@ public class Ray {
         return _direction;
     }
 
+    /**
+     * Returns the origin point of the ray.
+     * @return the origin point
+     */
     public Point origin() {
         return _origin;
     }
