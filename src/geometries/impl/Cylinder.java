@@ -40,7 +40,7 @@ public class Cylinder extends Tube {
         if (isZero(t)) return v.scale(-1);
 
         // Check if the point is on the upper base
-        Point p1 = p0.add(v.scale(_height));
+        Point p1 = _axis.getPoint(_height);
         if (point.equals(p1)) return v;
 
         Vector p1ToPoint = point.subtract(p1);
@@ -50,7 +50,7 @@ public class Cylinder extends Tube {
         if (isZero(t2)) return v;
 
         // Otherwise, it's on the side of the cylinder
-        Point o = p0.add(v.scale(t));
+        Point o = _axis.getPoint(t);
         return point.subtract(o).normalize();
     }
 }

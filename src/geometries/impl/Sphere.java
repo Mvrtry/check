@@ -37,7 +37,7 @@ public class Sphere extends RadialGeometry {
 
         // Special Case: Ray starts exactly at the center of the sphere
         if (_center.equals(p0)) {
-            return List.of(p0.add(v.scale(_radius)));
+            return List.of(ray.getPoint(_radius));
         }
 
         Vector u = _center.subtract(p0);
@@ -62,16 +62,16 @@ public class Sphere extends RadialGeometry {
         // Two intersection points in front of the ray's origin
         if (t1 > 0 && t2 > 0) {
             // t1 is always smaller than t2 (since th is positive), so it's closer to p0.
-            return List.of(p0.add(v.scale(t1)), p0.add(v.scale(t2)));
+            return List.of(ray.getPoint(t1), ray.getPoint(t2));
         }
 
         // Only one intersection point is in front of the ray's origin (Ray starts inside)
         if (t1 > 0) {
-            return List.of(p0.add(v.scale(t1)));
+            return List.of(ray.getPoint(t1));
         }
 
         if (t2 > 0) {
-            return List.of(p0.add(v.scale(t2)));
+            return List.of(ray.getPoint(t2));
         }
 
         return null;

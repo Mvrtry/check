@@ -52,4 +52,21 @@ public class Ray {
     public String toString() {
         return "Ray: " + _origin + _direction;
     }
+
+    /**
+     * Calculates a point on the ray line at a given distance from the origin.
+     * P = P0 + t * v
+     *
+     * @param t the distance from the origin
+     * @return the calculated point
+     */
+    public Point getPoint(double t) {
+        try {
+            return _origin.add(_direction.scale(t));
+        } catch (IllegalArgumentException e) {
+            // If t is zero, scaling creates a zero vector which throws an exception.
+            // In this case, the distance is 0, meaning the point is exactly the origin.
+            return _origin;
+        }
+    }
 }

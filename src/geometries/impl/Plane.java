@@ -78,7 +78,6 @@ public class Plane extends Geometry {
         }
 
         // Calculate the actual intersection point: P = P0 + t * v
-        Point intersectionPoint = p0.add(v.scale(t));
-        return List.of(intersectionPoint);
+        return List.of(ray.getPoint(t));
     }
 }

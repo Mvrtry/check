@@ -32,7 +32,7 @@ public class Tube extends RadialGeometry {
             return p0ToPoint.normalize();
         }
 
-        Point o = _axis.origin().add(_axis.direction().scale(t));
+        Point o = _axis.getPoint(t);
         return point.subtract(o).normalize();
     }
 

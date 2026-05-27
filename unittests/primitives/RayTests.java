@@ -17,6 +17,11 @@ class RayTests {
     /** Unnormalized direction vector for ray tests */
     private static final Vector DIR = new Vector(0, 0, 5);
 
+    // ============ Fields for getPoint test ==============
+    private static final Ray RAY = new Ray(P1, DIR); // Ray origin: (1,2,3), direction: (0,0,1)
+    private static final Point P2 = new Point(1, 2, 5); // Expected point for t = 2
+    private static final Point P3 = new Point(1, 2, 1); // Expected point for t = -2
+
     /**
      * Test method for {@link Ray#Ray(Point, Vector)}.
      */
@@ -31,5 +36,22 @@ class RayTests {
 
         // Verify the direction is correctly calculated
         assertEquals(new Vector(0, 0, 1), ray.direction(), ERROR_RESULT);
+    }
+
+    /**
+     * Test method for {@link Ray#getPoint(double)}.
+     */
+    @Test
+    void testGetPoint() {
+        // ============ Equivalence Partitions Tests ==============
+        // EP01: t > 0 (Positive distance)
+        assertEquals(P2, RAY.getPoint(2), ERROR_RESULT);
+
+        // EP02: t < 0 (Negative distance)
+        assertEquals(P3, RAY.getPoint(-2), ERROR_RESULT);
+
+        // =============== Boundary Values Tests ==================
+        // BV01: t = 0 (Zero distance, should return origin point)
+        assertEquals(P1, RAY.getPoint(0), ERROR_RESULT);
     }
 }
