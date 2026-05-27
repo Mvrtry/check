@@ -1,5 +1,8 @@
 package geometries.impl;
 
+import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
+
 import java.util.List;
 import geometries.api.Geometry;
 import primitives.Point;
@@ -46,6 +49,36 @@ public class Plane extends Geometry {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        return null; // Skeleton implementation
+        Point p0 = ray.origin();
+        Vector v = ray.direction();
+
+        double nv = _normal.dotProduct(v);
+
+        // Ray is parallel to the plane (nv == 0)
+        // Included in the plane or strictly parallel
+        if (isZero(nv)) {
+            return null;
+        }
+
+        // Ray starts exactly at the plane's reference point Q
+        // We must check this to avoid a zero-vector exception in the subtract method
+        if (_q.equals(p0)) {
+            return null;
+        }
+
+        Vector p0ToQ = _q.subtract(p0);
+        double numerator = _normal.dotProduct(p0ToQ);
+
+        // Calculate the scalar t
+        double t = alignZero(numerator / nv);
+
+        // Intersection point is behind the ray's origin or exactly on it (t <= 0)
+        if (t <= 0) {
+            return null;
+        }
+
+        // Calculate the actual intersection point: P = P0 + t * v
+        Point intersectionPoint = p0.add(v.scale(t));
+        return List.of(intersectionPoint);
     }
 }
