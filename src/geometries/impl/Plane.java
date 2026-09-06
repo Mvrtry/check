@@ -73,11 +73,6 @@ public class Plane extends Geometry {
         double t = alignZero(numerator / nv);
 
         // Intersection point is behind the ray's origin or exactly on it (t <= 0)
-        if (t <= 0) {
-            return null;
-        }
-
-        // Calculate the actual intersection point: P = P0 + t * v
-        return List.of(ray.getPoint(t));
+        return t <= 0 ? null : List.of(ray.getPoint(t));
     }
 }
