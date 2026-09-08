@@ -40,9 +40,15 @@ class TriangleTests {
     private static final Point P9 = new Point(0, 1, -1);
     private static final Point P10 = new Point(-2, 1, -1);
     private static final Point P11 = new Point(0, 0.5, 0);
+    /** Off-plane point (z=1) used for parallel/orthogonal inherited-plane tests */
+    private static final Point P12 = new Point(0, 3, 1);
+    /** Below-plane point that projects to P11 when fired along V1 */
+    private static final Point P13 = new Point(0, 0.5, -2);
 
     private static final Vector V1 = new Vector(0, 0, 1);
     private static final Vector V2 = new Vector(0, -1, 1);
+    /** In-plane direction vector (parallel to TRIANGLE_INT's plane) */
+    private static final Vector V3 = new Vector(1, 0, 0);
 
     /**
      * Test method for {@link Triangle#getNormal(Point)}.
@@ -88,5 +94,34 @@ class TriangleTests {
 
         // BV03: Ray intersects on edge's continuation
         assertNull(TRIANGLE_INT.findIntersections(new Ray(P10, V2)), ERROR_NO_INTERSECTION);
+
+        // **** Group: Inherited Plane Cases ****
+
+        // EP04: Ray is oblique to the plane and does not intersect it (t <= 0)
+        assertNull(TRIANGLE_INT.findIntersections(new Ray(P12, V2)), ERROR_NO_INTERSECTION);
+
+        // BV14: Ray is parallel to the plane and included in it
+        assertNull(TRIANGLE_INT.findIntersections(new Ray(P11, V3)), ERROR_NO_INTERSECTION);
+
+        // BV15: Ray is parallel to the plane and not included in it
+        assertNull(TRIANGLE_INT.findIntersections(new Ray(P12, V3)), ERROR_NO_INTERSECTION);
+
+        // BV16: Ray is orthogonal to the plane, starts before it, and lands inside the triangle (1 point)
+        List<Point> resultBV16 = TRIANGLE_INT.findIntersections(new Ray(P13, V1));
+        assertNotNull(resultBV16, ERROR_RESULT);
+        assertEquals(1, resultBV16.size(), ERROR_WRONG_NUM_OF_INTERSECTIONS);
+        assertEquals(List.of(P11), resultBV16, ERROR_RESULT);
+
+        // BV17: Ray is orthogonal to the plane and starts exactly in the plane
+        assertNull(TRIANGLE_INT.findIntersections(new Ray(P11, V1)), ERROR_NO_INTERSECTION);
+
+        // BV18: Ray is orthogonal to the plane and starts after it
+        assertNull(TRIANGLE_INT.findIntersections(new Ray(P12, V1)), ERROR_NO_INTERSECTION);
+
+        // BV19: Ray is oblique, begins in the plane, but not at the plane's reference point Q
+        assertNull(TRIANGLE_INT.findIntersections(new Ray(P11, V2)), ERROR_NO_INTERSECTION);
+
+        // BV20: Ray is oblique and begins exactly at the plane's reference point Q
+        assertNull(TRIANGLE_INT.findIntersections(new Ray(P3, V2)), ERROR_NO_INTERSECTION);
     }
 }

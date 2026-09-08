@@ -22,6 +22,21 @@ class VectorTests {
     private static final Vector V2 = new Vector(0, 3, -2);
     /** Vector (1, 1, 1) used for simple arithmetic */
     private static final Vector V3 = new Vector(1, 1, 1);
+
+    /**
+     * Test method for {@link Vector#Vector(double, double, double)}.
+     */
+    @Test
+    void testConstructor() {
+        // ============ Equivalence Partitions Tests ==============
+        // EP01: Simple construction of a non-zero vector
+        assertDoesNotThrow(() -> new Vector(1, 2, 3), "Failed constructing a correct vector");
+
+        // =============== Boundary Values Tests ==================
+        // BV01: Construction of the zero vector (should throw)
+        assertThrows(IllegalArgumentException.class, () -> new Vector(0, 0, 0), ERROR_EXCEPTION);
+    }
+
     /**
      * Test method for {@link Vector#add(Vector)}.
      */

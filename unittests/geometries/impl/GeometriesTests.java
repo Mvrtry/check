@@ -12,23 +12,52 @@ import java.util.List;
  */
 class GeometriesTests {
 
+    // ============ Shared Fields ==============
     /** Error message for missing intersections */
     private static final String ERROR_NULL = "ERROR: Expected null but got a list";
     /** Error message for wrong number of intersections */
     private static final String ERROR_COUNT = "ERROR: Wrong number of intersection points";
 
-    private static final Plane PLANE = new Plane(new Point(0, 0, 5), new Vector(0, 0, 1));
-    private static final Sphere SPHERE = new Sphere(new Point(0, 0, 2), 1d);
-    private static final Triangle TRIANGLE = new Triangle(new Point(0, 1, 10), new Point(1, -1, 10), new Point(-1, -1, 10));
+    // ============ Fields for Geometries setup ==============
+    /** Reference point on PLANE, Z = 5. */
+    private static final Point PLANE_POINT = new Point(0, 0, 5);
+    /** Normal of PLANE, +Z. */
+    private static final Vector PLANE_NORMAL = new Vector(0, 0, 1);
+    /** Plane at Z = 5. Used in: testFindIntersections. */
+    private static final Plane PLANE = new Plane(PLANE_POINT, PLANE_NORMAL);
 
+    /** Center of SPHERE, Z = 2. */
+    private static final Point SPHERE_CENTER = new Point(0, 0, 2);
+    /** Radius of SPHERE. */
+    private static final double SPHERE_RADIUS = 1d;
+    /** Unit sphere at Z = 2. Used in: testFindIntersections. */
+    private static final Sphere SPHERE = new Sphere(SPHERE_CENTER, SPHERE_RADIUS);
+
+    /** Vertex of TRIANGLE, Z = 10. */
+    private static final Point TRIANGLE_V1 = new Point(0, 1, 10);
+    /** Vertex of TRIANGLE, Z = 10. */
+    private static final Point TRIANGLE_V2 = new Point(1, -1, 10);
+    /** Vertex of TRIANGLE, Z = 10. */
+    private static final Point TRIANGLE_V3 = new Point(-1, -1, 10);
+    /** Triangle at Z = 10. Used in: testFindIntersections. */
+    private static final Triangle TRIANGLE = new Triangle(TRIANGLE_V1, TRIANGLE_V2, TRIANGLE_V3);
+
+    /** Composite of PLANE, SPHERE, TRIANGLE. Used in: testFindIntersections. */
     private static final Geometries GEOMETRIES = new Geometries(PLANE, SPHERE, TRIANGLE);
 
+    // ============ Fields for testFindIntersections ==============
+    /** Ray origin before all geometries. Used in: BV02, BV04. */
     private static final Point P1 = new Point(0, 0, -1);
+    /** Ray origin between sphere and plane. Used in: EP01. */
     private static final Point P2 = new Point(0, 0, 4);
+    /** Ray origin between plane and triangle. Used in: BV03. */
     private static final Point P3 = new Point(0, 0, 6);
+    /** Arbitrary origin for the empty-collection case. Used in: BV01. */
     private static final Point P4 = new Point(0, 0, 0);
 
+    /** Direction +Z, through all geometries. Used in: EP01, BV01, BV03, BV04. */
     private static final Vector V1 = new Vector(0, 0, 1);
+    /** Direction +X, misses all geometries. Used in: BV02. */
     private static final Vector V2 = new Vector(1, 0, 0);
 
     /**

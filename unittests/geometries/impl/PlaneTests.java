@@ -13,7 +13,7 @@ class PlaneTests {
     private static final double DELTA = 1e-6;
     /** Error message for expected exception. */
     private static final String ERROR_EXCEPTION = "ERROR: Exception was not thrown";
-    /** Error message for wrong result. */
+    /** Error message for wrong result value. */
     private static final String ERROR_RESULT = "ERROR: Wrong result value";
 
     /** First point for plane tests */
@@ -85,7 +85,7 @@ class PlaneTests {
         // EP01: Test that the normal is properly normalized when using the Point & Vector constructor
         Vector unnormalizedVector = new Vector(0, 0, 5); // Length is 5
         Plane pl = new Plane(P1, unnormalizedVector);
-        assertEquals(1d, pl.getNormal(null).length(), DELTA, "Normal vector was not normalized in constructor");
+        assertEquals(1d, pl.getNormal(P1).length(), DELTA, "Normal vector was not normalized in constructor");
     }
 
     /**
