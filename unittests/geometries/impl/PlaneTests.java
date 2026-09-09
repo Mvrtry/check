@@ -9,46 +9,55 @@ import java.util.List;
  * Unit tests for class {@link Plane}.
  */
 class PlaneTests {
+
+    // ============ Shared Fields ==============
     /** Delta value for accuracy when comparing double values. */
     private static final double DELTA = 1e-6;
     /** Error message for expected exception. */
     private static final String ERROR_EXCEPTION = "ERROR: Exception was not thrown";
     /** Error message for wrong result value. */
     private static final String ERROR_RESULT = "ERROR: Wrong result value";
-
-    /** First point for plane tests */
-    private static final Point P1 = new Point(0, 0, 1);
-    /** Second point for plane tests */
-    private static final Point P2 = new Point(1, 0, 0);
-    /** Third point for plane tests */
-    private static final Point P3 = new Point(0, 1, 0);
-
-    /** Point for BV collinear tests */
-    private static final Point P_LINE1 = new Point(1, 1, 1);
-    /** Point for BV collinear tests */
-    private static final Point P_LINE2 = new Point(2, 2, 2);
-    /** Point for BV collinear tests */
-    private static final Point P_LINE3 = new Point(3, 3, 3);
-
-    /** Point for EP normal test (not the reference point) */
-    private static final Point P_NORMAL_EP = new Point(0.5, 0.5, 0);
-
-    // ============ Fields for findIntersections test ==============
     /** Error message for missing intersections */
     private static final String ERROR_NO_INTERSECTION = "ERROR: Ray does not intersect (expected null)";
     /** Error message for wrong number of intersections */
     private static final String ERROR_WRONG_NUM_OF_INTERSECTIONS = "ERROR: Wrong number of intersection points";
 
+    /** Reference point / plane vertex, reused across all four test methods. Used in: testConstructorThreePoints, testConstructorPointVector, testGetNormal, testFindIntersections. */
+    private static final Point P1 = new Point(0, 0, 1);
+    /** Second vertex for plane construction. Used in: testConstructorThreePoints, testGetNormal. */
+    private static final Point P2 = new Point(1, 0, 0);
+    /** Third vertex for plane construction. Used in: testConstructorThreePoints, testGetNormal. */
+    private static final Point P3 = new Point(0, 1, 0);
+
+    /** First collinear point. Used in: testConstructorThreePoints BV05. */
+    private static final Point P_LINE1 = new Point(1, 1, 1);
+    /** Second collinear point. Used in: testConstructorThreePoints BV05. */
+    private static final Point P_LINE2 = new Point(2, 2, 2);
+    /** Third collinear point. Used in: testConstructorThreePoints BV05. */
+    private static final Point P_LINE3 = new Point(3, 3, 3);
+
+    /** On-plane point, not the reference point P1. Used in: testGetNormal EP01. */
+    private static final Point P_NORMAL_EP = new Point(0.5, 0.5, 0);
+
+    // ============ Fields for testFindIntersections ==============
+    /** Ray origin below the plane, on its perpendicular axis. Used in: EP01, EP02, BV02. */
     private static final Point P4 = new Point(0, 0, 0);
+    /** Ray origin further below the plane. Used in: BV03. */
     private static final Point P5 = new Point(0, 0, -1);
+    /** Ray origin above the plane. Used in: BV05. */
     private static final Point P6 = new Point(0, 0, 2);
 
+    /** Direction orthogonal to the plane (matches its normal). Used in: EP01, BV03, BV04, BV05. */
     private static final Vector V1 = new Vector(0, 0, 1);
+    /** In-plane direction, used to fire a ray that misses the plane. Used in: EP02. */
     private static final Vector V2 = new Vector(0, 1, 0);
+    /** Direction parallel to the plane. Used in: BV01, BV02. */
     private static final Vector V3 = new Vector(1, 0, 0);
+    /** Oblique direction (neither parallel nor orthogonal to the plane). Used in: BV06, BV07. */
     private static final Vector V4 = new Vector(1, 1, 1);
 
-    private static final Plane PLANE_INT = new Plane(P1, V1); // P1 is (0,0,1) from original file
+    /** Plane under test: passes through P1, normal along V1 (i.e. the z = 1 plane). Used in: testFindIntersections. */
+    private static final Plane PLANE_INT = new Plane(P1, V1);
 
     /**
      * Test method for {@link Plane#Plane(Point, Point, Point)}.

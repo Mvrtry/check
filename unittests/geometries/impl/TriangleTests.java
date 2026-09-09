@@ -9,45 +9,57 @@ import java.util.List;
  * Unit tests for class {@link Triangle}.
  */
 class TriangleTests {
+
+    // ============ Shared Fields ==============
     /** Delta value for accuracy when comparing double values. */
     private static final double DELTA = 1e-6;
     /** Error message for wrong result */
     private static final String ERROR_RESULT = "ERROR: wrong result";
-
-    /** First point for triangle tests */
-    private static final Point P1 = new Point(0, 0, 1);
-    /** Second point for triangle tests */
-    private static final Point P2 = new Point(1, 0, 0);
-    /** Third point for triangle tests */
-    private static final Point P3 = new Point(0, 1, 0);
-
-    /** Point strictly inside the triangle for EP test */
-    private static final Point P_INSIDE = new Point(1d / 3, 1d / 3, 1d / 3);
-
-    // ============ Fields for findIntersections test ==============
     /** Error message for missing intersections */
     private static final String ERROR_NO_INTERSECTION = "ERROR: Ray does not intersect (expected null)";
     /** Error message for wrong number of intersections */
     private static final String ERROR_WRONG_NUM_OF_INTERSECTIONS = "ERROR: Wrong number of intersection points";
 
-    private static final Point P4 = new Point(-1, 0, 0);
-    private static final Triangle TRIANGLE_INT = new Triangle(P3, P2, P4); // Using original P3(0,1,0), P2(1,0,0) and new P4(-1,0,0)
+    // ============ Fields for testGetNormal ==============
+    /** First vertex of the getNormal test triangle. Used in: testGetNormal. */
+    private static final Point P1 = new Point(0, 0, 1);
+    /** Second vertex of the getNormal test triangle. Used in: testGetNormal. */
+    private static final Point P2 = new Point(1, 0, 0);
+    /** Third vertex of the getNormal test triangle; also reused as a TRIANGLE_INT vertex and BV20 origin. Used in: testGetNormal, testFindIntersections. */
+    private static final Point P3 = new Point(0, 1, 0);
+    /** Centroid-like point strictly inside the getNormal triangle. Used in: testGetNormal EP01. */
+    private static final Point P_INSIDE = new Point(1d / 3, 1d / 3, 1d / 3);
 
+    // ============ Fields for testFindIntersections ==============
+    /** Third vertex of TRIANGLE_INT. Used in: TRIANGLE_INT construction. */
+    private static final Point P4 = new Point(-1, 0, 0);
+    /** Triangle under test, vertices P3, P2, P4. Used in: testFindIntersections. */
+    private static final Triangle TRIANGLE_INT = new Triangle(P3, P2, P4);
+
+    /** Ray origin below the triangle's interior. Used in: EP01. */
     private static final Point P5 = new Point(0, 0.5, -1);
+    /** Ray origin below and outside, facing an edge. Used in: EP02. */
     private static final Point P6 = new Point(2, 1, -1);
+    /** Ray origin below and outside, facing a vertex. Used in: EP03. */
     private static final Point P7 = new Point(1, 1, -1);
+    /** Ray origin below, aimed exactly at an edge. Used in: BV01. */
     private static final Point P8 = new Point(0.5, 0.5, -1);
+    /** Ray origin below, aimed exactly at a vertex. Used in: BV02. */
     private static final Point P9 = new Point(0, 1, -1);
+    /** Ray origin below, aimed at an edge's continuation. Used in: BV03. */
     private static final Point P10 = new Point(-2, 1, -1);
+    /** Point inside the triangle, on its plane. Expected hit point for EP01/BV16; ray origin for BV14, BV17, BV19. */
     private static final Point P11 = new Point(0, 0.5, 0);
-    /** Off-plane point (z=1) used for parallel/orthogonal inherited-plane tests */
+    /** Off-plane point above the triangle's plane. Used in: EP04, BV15, BV18. */
     private static final Point P12 = new Point(0, 3, 1);
-    /** Below-plane point that projects to P11 when fired along V1 */
+    /** Ray origin below the plane, projects onto P11 along V1. Used in: BV16. */
     private static final Point P13 = new Point(0, 0.5, -2);
 
+    /** Direction orthogonal to the triangle's plane. Used in: EP01, BV16, BV17, BV18. */
     private static final Vector V1 = new Vector(0, 0, 1);
+    /** Oblique direction used for the plane-hit-position cases. Used in: EP02, EP03, BV01, BV02, BV03, EP04, BV19, BV20. */
     private static final Vector V2 = new Vector(0, -1, 1);
-    /** In-plane direction vector (parallel to TRIANGLE_INT's plane) */
+    /** Direction parallel to the triangle's plane. Used in: BV14, BV15. */
     private static final Vector V3 = new Vector(1, 0, 0);
 
     /**
