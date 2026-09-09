@@ -1,5 +1,6 @@
 package primitives;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -72,5 +73,27 @@ public class Ray {
             // In this case, the distance is 0, meaning the point is exactly the origin.
             return _origin;
         }
+    }
+
+    /**
+     * Finds the point closest to the ray's origin from a list of points.
+     * @param points list of points to search; assumed non-empty if not null
+     * @return the closest point to the ray's origin, or null if the list is null
+     */
+    public Point findClosestPoint(List<Point> points) {
+        if (points == null) return null;
+
+        Point closestPoint = null;
+        double closestDistanceSquared = Double.POSITIVE_INFINITY;
+
+        for (Point point : points) {
+            double distanceSquared = _origin.distanceSquared(point);
+            if (distanceSquared < closestDistanceSquared) {
+                closestDistanceSquared = distanceSquared;
+                closestPoint = point;
+            }
+        }
+
+        return closestPoint;
     }
 }
