@@ -30,11 +30,11 @@ class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Computes the color at a given intersection, based on ambient light and the geometry's emission.
+     * Computes the color at a given intersection: ambient light attenuated by the material's kA, plus emission.
      * @param intersection the intersection whose color is computed
      * @return the resulting color at the intersection
      */
     private Color calcColor(Intersection intersection) {
-        return scene.ambientLight.getIntensity().add(intersection.geometry.getEmission());
+        return scene.ambientLight.getIntensity().scale(intersection.material.kA).add(intersection.geometry.getEmission());
     }
 }

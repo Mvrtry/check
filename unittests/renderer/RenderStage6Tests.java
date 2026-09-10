@@ -5,13 +5,14 @@ import static java.awt.Color.GREEN;
 import static java.awt.Color.RED;
 import static java.awt.Color.WHITE;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import geometries.impl.Sphere;
 import geometries.impl.Triangle;
 import lighting.AmbientLight;
 import primitives.Color;
+import primitives.Double3;
+import primitives.Material;
 import primitives.Point;
 import primitives.Vector;
 import scene.Scene;
@@ -86,14 +87,14 @@ class RenderStage6Tests {
     */
    private static void createImage(Scene scene, String fileName) {
       Camera.getBuilder() //
-         .setResolution(RESOLUTION, RESOLUTION) //
-         .setLocation(Point.ZERO).setDirection(new Point(0, 0, -1), Vector.AXIS_Y) //
-         .setVpDistance(DISTANCE).setVpSize(SIZE, SIZE) //
-         .setRayTracer(scene, RayTracerType.SIMPLE) //
-         .build() //
-         .renderImage() //
-         .printGrid(INTERVAL, new Color(WHITE)) //
-         .writeToImage(fileName);
+              .setResolution(RESOLUTION, RESOLUTION) //
+              .setLocation(Point.ZERO).setDirection(new Point(0, 0, -1), Vector.AXIS_Y) //
+              .setVpDistance(DISTANCE).setVpSize(SIZE, SIZE) //
+              .setRayTracer(scene, RayTracerType.SIMPLE) //
+              .build() //
+              .renderImage() //
+              .printGrid(INTERVAL, new Color(WHITE)) //
+              .writeToImage(fileName);
    }
 
    /**
@@ -105,10 +106,10 @@ class RenderStage6Tests {
    void testRenderEmissionColor() {
       Scene scene = new Scene("Emission color").setAmbientLight(new AmbientLight(new Color(51, 51, 51)));
       scene.geometries //
-         .add(_sphere, // no emission
-              _triangleLeftTop.setEmission(new Color(GREEN)),
-              _triangleLeftBottom.setEmission(new Color(RED)),
-              _triangleRightBottom.setEmission(new Color(BLUE)));
+              .add(_sphere, // no emission
+                      _triangleLeftTop.setEmission(new Color(GREEN)),
+                      _triangleLeftBottom.setEmission(new Color(RED)),
+                      _triangleRightBottom.setEmission(new Color(BLUE)));
       createImage(scene, "emission render test");
    }
 
@@ -118,15 +119,14 @@ class RenderStage6Tests {
     * bodies and render it into a png image with a grid
     */
    @Test
-   @Disabled("To be updated and enabled by students")
    void testRenderAmbientColor() {
-      Scene scene = new Scene("Ambient colors"); // TODO by students
+      Scene scene = new Scene("Ambient colors").setAmbientLight(new AmbientLight(new Color(WHITE)));
       scene.geometries //
-         .add(_sphere, // TODO by students
-              _triangleLeftTop, // TODO by students
-              _triangleLeftBottom, // TODO by students
-              _triangleRightBottom // TODO by students
-         );
+              .add(_sphere.setMaterial(new Material().setKa(0.4)),
+                      _triangleLeftTop.setMaterial(new Material().setKa(new Double3(0, 0.8, 0))),
+                      _triangleLeftBottom.setMaterial(new Material().setKa(new Double3(0.8, 0, 0))),
+                      _triangleRightBottom.setMaterial(new Material().setKa(new Double3(0, 0, 0.8)))
+              );
       createImage(scene, "ambient render test");
    }
 }
