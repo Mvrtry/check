@@ -3,6 +3,8 @@ package primitives;
 import java.util.List;
 import java.util.Objects;
 
+import geometries.api.Intersectable.Intersection;
+
 /**
  * Represents a ray in 3D space, defined by an origin point and a direction vector.
  */
@@ -81,19 +83,33 @@ public class Ray {
      * @return the closest point to the ray's origin, or null if the list is null
      */
     public Point findClosestPoint(List<Point> points) {
-        if (points == null) return null;
+        return points == null ? null
+                : findClosestIntersection(
+                points.stream()
+                .map(point -> new Intersection(null, point))
+                .toList()
+        ).point;
+    }
 
-        Point closestPoint = null;
+    /**
+     * Finds the intersection closest to the ray's origin from a list of intersections.
+     * @param intersections list of intersections to search; assumed non-empty if not null
+     * @return the closest intersection to the ray's origin, or null if the list is null or empty
+     */
+    public Intersection findClosestIntersection(List<Intersection> intersections) {
+        if (intersections == null || intersections.isEmpty()) return null;
+
+        Intersection closestIntersection = null;
         double closestDistanceSquared = Double.POSITIVE_INFINITY;
 
-        for (Point point : points) {
-            double distanceSquared = _origin.distanceSquared(point);
+        for (Intersection intersection : intersections) {
+            double distanceSquared = _origin.distanceSquared(intersection.point);
             if (distanceSquared < closestDistanceSquared) {
                 closestDistanceSquared = distanceSquared;
-                closestPoint = point;
+                closestIntersection = intersection;
             }
         }
 
-        return closestPoint;
+        return closestIntersection;
     }
 }
