@@ -1,14 +1,12 @@
 package renderer;
 
-import java.util.List;
-
+import geometries.api.Intersectable.Intersection;
 import primitives.Color;
-import primitives.Point;
 import primitives.Ray;
 import scene.Scene;
 
 /**
- * Basic ray tracer that colors each pixel using the closest intersection point and ambient light only.
+ * Basic ray tracer that colors each pixel using the closest intersection and its geometry's emission and ambient light.
  */
 class SimpleRayTracer extends RayTracerBase {
 
@@ -22,21 +20,21 @@ class SimpleRayTracer extends RayTracerBase {
 
     @Override
     Color traceRay(Ray ray) {
-        List<Point> intersections = scene.geometries.findIntersections(ray);
+        var intersections = scene.geometries.calcIntersections(ray);
         if (intersections == null) {
             return scene.background;
         }
 
-        Point closestPoint = ray.findClosestPoint(intersections);
-        return calcColor(closestPoint);
+        Intersection closestIntersection = ray.findClosestIntersection(intersections);
+        return calcColor(closestIntersection);
     }
 
     /**
-     * Computes the color at a given point. At this stage, based on ambient light only.
-     * @param point the point whose color is computed
-     * @return the resulting color at the point
+     * Computes the color at a given intersection, based on ambient light and the geometry's emission.
+     * @param intersection the intersection whose color is computed
+     * @return the resulting color at the intersection
      */
-    private Color calcColor(Point point) {
-        return scene.ambientLight.getIntensity();
+    private Color calcColor(Intersection intersection) {
+        return scene.ambientLight.getIntensity().add(intersection.geometry.getEmission());
     }
 }
