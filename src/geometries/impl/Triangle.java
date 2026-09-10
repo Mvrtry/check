@@ -3,6 +3,7 @@ package geometries.impl;
 import static primitives.Util.alignZero;
 
 import java.util.List;
+import geometries.api.Intersectable.Intersection;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -23,7 +24,7 @@ public class Triangle extends Polygon {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    protected List<Intersection> calcIntersectionsHelper(Ray ray) {
         // Step 1: Intersect the ray with the plane containing the triangle
         List<Point> planeIntersections = _plane.findIntersections(ray);
         if (planeIntersections == null) {
@@ -60,7 +61,8 @@ public class Triangle extends Polygon {
 
             // The point is inside the triangle IF AND ONLY IF all three signs are identical
             if ((s1 > 0 && s2 > 0 && s3 > 0) || (s1 < 0 && s2 < 0 && s3 < 0)) {
-                return planeIntersections; // We reuse the point computed by the Plane
+                // We reuse the point computed by the Plane, but the geometry must be this Triangle
+                return List.of(new Intersection(this, planeIntersections.getFirst()));
             }
         } catch (IllegalArgumentException e) {
             // If crossProduct throws an exception, it means the vectors are parallel.
