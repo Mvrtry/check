@@ -2,9 +2,11 @@ package geometries.api;
 
 import java.util.List;
 import java.util.Objects;
+import lighting.LightSource;
 import primitives.Material;
 import primitives.Point;
 import primitives.Ray;
+import primitives.Vector;
 
 /**
  * Common abstract class for all geometries that can be intersected by a ray.
@@ -27,6 +29,18 @@ public abstract class Intersectable {
         public final Point point;
         /** The material of the intersected geometry (a default material if geometry is null) */
         public final Material material;
+        /** The geometry normal at the intersection point */
+        public Vector normal;
+        /** The direction of the intersecting ray */
+        public Vector v;
+        /** The dot product of v and the normal */
+        public double vNormal;
+        /** The light source currently being processed */
+        public LightSource light;
+        /** The direction from the current light source to the intersection point */
+        public Vector l;
+        /** The dot product of l and the normal */
+        public double lNormal;
 
         /**
          * Constructs an Intersection with the given geometry and point.
@@ -83,7 +97,7 @@ public abstract class Intersectable {
         var intersections = calcIntersections(ray);
         return intersections == null ? null
                 : intersections.stream()
-                  .map(intersection -> intersection.point)
-                  .toList();
+                .map(intersection -> intersection.point)
+                .toList();
     }
 }

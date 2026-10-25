@@ -1,7 +1,11 @@
 package scene;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import geometries.impl.Geometries;
 import lighting.AmbientLight;
+import lighting.LightSource;
 import primitives.Color;
 
 /**
@@ -20,6 +24,9 @@ public class Scene {
 
     /** The geometric model of the scene. Defaults to an empty {@link Geometries}. */
     public Geometries geometries = new Geometries();
+
+    /** The external light sources of the scene. Defaults to an empty list. */
+    public List<LightSource> lights = new ArrayList<>();
 
     /**
      * Creates a scene with the given name; other fields keep their defaults.
