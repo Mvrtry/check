@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package primitives;
 
@@ -44,10 +44,10 @@ public record Double3(double _d1, double _d2, double _d3) {
    @Override
    public boolean equals(Object obj) {
       return this == obj
-            || (obj instanceof Double3(double od1, double od2, double od3))
-                  && isZero(_d1 - od1)
-                  && isZero(_d2 - od2)
-                  && isZero(_d3 - od3);
+              || (obj instanceof Double3(double od1, double od2, double od3))
+              && isZero(_d1 - od1)
+              && isZero(_d2 - od2)
+              && isZero(_d3 - od3);
    }
 
    @Override
@@ -97,6 +97,13 @@ public record Double3(double _d1, double _d2, double _d3) {
     * @return   {@code true} if all components are smaller than {@code k}
     */
    public boolean isLowerThan(double k) { return _d1 < k && _d2 < k && _d3 < k; }
+
+   /**
+    * Checks whether at least one component is greater than or equal to a given value (negation of isLowerThan).
+    * @param  k the value to compare against
+    * @return   true if at least one component is not smaller than k
+    */
+   public boolean isGreaterThan(double k) { return _d1 >= k || _d2 >= k || _d3 >= k; }
 
    /**
     * Checks whether all components of this triad are smaller than the

@@ -65,7 +65,7 @@ class SimpleRayTracer extends RayTracerBase {
      * @return the color at the intersection
      */
     private Color calcColor(Intersection intersection, int level, Double3 k) {
-        Color color = calcLocalEffects(intersection);
+        Color color = calcLocalEffects(intersection, k);
         return level == 1 ? color : color.add(calcGlobalEffects(intersection, level, k));
     }
 
@@ -122,15 +122,18 @@ class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Computes the emission plus the diffuse and specular contributions of all light sources in the scene.
+     * Computes the emission plus the diffuse and specular contributions of all light sources, attenuated by shadows.
      * @param intersection the preprocessed intersection
+     * @param k            the accumulated attenuation factor
      * @return the local effects color at the intersection
      */
-    private Color calcLocalEffects(Intersection intersection) {
+    private Color calcLocalEffects(Intersection intersection, Double3 k) {
         Color color = intersection.geometry.getEmission();
         for (LightSource lightSource : scene.lights) {
-            if (preprocessLightSource(intersection, lightSource) && unshaded(intersection)) {
-                color = color.add(lightSource.getIntensity(intersection.point)
+            if (!preprocessLightSource(intersection, lightSource)) continue;
+            Double3 ktr = transparency(intersection);
+            if (ktr.product(k).isGreaterThan(MIN_CALC_COLOR_K)) {
+                color = color.add(lightSource.getIntensity(intersection.point).scale(ktr)
                         .scale(calcDiffuse(intersection).add(calcSpecular(intersection))));
             }
         }
@@ -155,6 +158,28 @@ class SimpleRayTracer extends RayTracerBase {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Computes the accumulated transparency factor of all geometries between the intersection point and the light.
+     * @param intersection the intersection preprocessed for the current light source
+     * @return the accumulated transparency factor, ZERO if the light is practically blocked
+     */
+    private Double3 transparency(Intersection intersection) {
+        Ray shadowRay = new Ray(intersection.point, intersection.l.scale(-1), intersection.normal);
+
+        Double3 ktr = Double3.ONE;
+        var shadowIntersections = scene.geometries.calcIntersections(shadowRay);
+        if (shadowIntersections == null) return ktr;
+
+        double lightDistance = intersection.light.getDistance(intersection.point);
+        for (Intersection shadowIntersection : shadowIntersections) {
+            if (alignZero(shadowIntersection.point.distance(intersection.point) - lightDistance) < 0) {
+                ktr = ktr.product(shadowIntersection.material.kT);
+                if (ktr.isLowerThan(MIN_CALC_COLOR_K)) return Double3.ZERO;
+            }
+        }
+        return ktr;
     }
 
     /**
