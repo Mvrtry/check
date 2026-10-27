@@ -2,11 +2,14 @@ package renderer;
 
 import static primitives.Util.alignZero;
 
+import java.util.List;
+
 import geometries.api.Intersectable.Intersection;
 import lighting.LightSource;
 import primitives.Color;
 import primitives.Double3;
 import primitives.Material;
+import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 import scene.Scene;
@@ -15,6 +18,8 @@ import scene.Scene;
  * Basic ray tracer that colors each pixel using the closest intersection and the Phong reflection model.
  */
 class SimpleRayTracer extends RayTracerBase {
+    /** Shadow ray head offset along the normal, preventing self-shadowing. */
+    private static final double DELTA = 0.1;
 
     /**
      * Creates a simple ray tracer for the given scene.
@@ -55,12 +60,32 @@ class SimpleRayTracer extends RayTracerBase {
     private Color calcLocalEffects(Intersection intersection) {
         Color color = intersection.geometry.getEmission();
         for (LightSource lightSource : scene.lights) {
-            if (preprocessLightSource(intersection, lightSource)) {
+            if (preprocessLightSource(intersection, lightSource) && unshaded(intersection)) {
                 color = color.add(lightSource.getIntensity(intersection.point)
                         .scale(calcDiffuse(intersection).add(calcSpecular(intersection))));
             }
         }
         return color;
+    }
+
+    /**
+     * Checks whether no geometry blocks the current light source from the intersection point.
+     * @param intersection the intersection preprocessed for the current light source
+     * @return true if the point is not shaded from the light source, false otherwise
+     */
+    private boolean unshaded(Intersection intersection) {
+        Vector pointToLight = intersection.l.scale(-1);
+        Vector delta = intersection.normal.scale(intersection.lNormal < 0 ? DELTA : -DELTA);
+        Ray shadowRay = new Ray(intersection.point.add(delta), pointToLight);
+
+        List<Point> shadowPoints = scene.geometries.findIntersections(shadowRay);
+        if (shadowPoints == null) return true;
+
+        double lightDistance = intersection.light.getDistance(intersection.point);
+        for (Point shadowPoint : shadowPoints) {
+            if (alignZero(shadowPoint.distance(intersection.point) - lightDistance) < 0) return false;
+        }
+        return true;
     }
 
     /**
