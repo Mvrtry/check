@@ -1,5 +1,7 @@
 package primitives;
 
+import static primitives.Util.alignZero;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -9,6 +11,8 @@ import geometries.api.Intersectable.Intersection;
  * Represents a ray in 3D space, defined by an origin point and a direction vector.
  */
 public class Ray {
+    /** Origin offset along the normal for secondary rays, preventing self-intersection */
+    private static final double DELTA = 0.1;
     /** The origin point of the ray */
     private final Point _origin;
     /** The normalized direction vector of the ray */
@@ -22,6 +26,28 @@ public class Ray {
     public Ray(Point origin, Vector direction) {
         _origin = origin;
         _direction = direction.normalize();
+    }
+
+    /**
+     * Constructor for a secondary ray whose origin is shifted by DELTA along the normal, toward the ray direction side.
+     * @param origin    the original point on the surface
+     * @param direction the ray direction
+     * @param normal    the surface normal at the origin point
+     */
+    public Ray(Point origin, Vector direction, Vector normal) {
+        this(shiftOrigin(origin, direction, normal), direction);
+    }
+
+    /**
+     * Shifts a point by DELTA along the normal, to the side the direction points to (no shift if they are orthogonal).
+     * @param origin    the point to shift
+     * @param direction the ray direction
+     * @param normal    the surface normal
+     * @return the shifted point
+     */
+    private static Point shiftOrigin(Point origin, Vector direction, Vector normal) {
+        double nd = alignZero(normal.dotProduct(direction));
+        return nd == 0 ? origin : origin.add(normal.scale(nd > 0 ? DELTA : -DELTA));
     }
 
 
@@ -86,8 +112,8 @@ public class Ray {
         return points == null ? null
                 : findClosestIntersection(
                 points.stream()
-                .map(point -> new Intersection(null, point))
-                .toList()
+                        .map(point -> new Intersection(null, point))
+                        .toList()
         ).point;
     }
 
